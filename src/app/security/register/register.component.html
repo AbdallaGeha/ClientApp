@@ -1,0 +1,61 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Register</h2>
+    </div>
+    <!-- Display server side errors -->
+    <span *ngIf="this.errorService.errorMessage" class="text-danger">{{this.errorService.errorMessage}}</span>
+    <!-- Form for user registration --> 
+    <form [formGroup]="formGroup" (ngSubmit)="register()">
+        <div class="form-group mt-3">
+            <input type="text" class="form-control" formControlName = "email" placeholder="Email">
+            <span class="text-danger" 
+            *ngIf="formGroup.get('email')?.touched && formGroup.get('email')?.hasError('required')">
+                Email is required
+            </span>
+            <span class="text-danger" 
+            *ngIf="formGroup.get('email')?.touched && formGroup.get('email')?.hasError('email')">
+                Email format doesn't match
+            </span>            
+        </div>
+        <div class="form-group mt-3">
+            <input type="text" class="form-control" formControlName = "name" placeholder="Name">
+            <span class="text-danger" 
+            *ngIf="formGroup.get('name')?.touched && formGroup.get('name')?.hasError('required')">
+                Name is required
+            </span>
+        </div> 
+        <div class="form-group mt-3">
+            <input type="text" class="form-control" formControlName = "phonenumber" placeholder="Phone Number">
+            <span class="text-danger" 
+            *ngIf="formGroup.get('phonenumber')?.touched && formGroup.get('phonenumber')?.hasError('required')">
+                Phone Number is required
+            </span>
+            <span class="text-danger" 
+            *ngIf="formGroup.get('phonenumber')?.touched && formGroup.get('phonenumber')?.hasError('pattern')">
+                Phone Number should be numbers only
+            </span>            
+        </div>               
+        <div class="form-group mt-3">
+            <input type="password" class="form-control" formControlName = "password" placeholder="Password">
+            <span class="text-danger" 
+            *ngIf="formGroup.get('password')?.touched && formGroup.get('password')?.hasError('required')">
+                password is required
+            </span>
+        </div> 
+        <div class="form-group mt-3">
+            <input type="password" class="form-control" formControlName = "confirmpassword" placeholder="Confirm Password">
+            <span class="text-danger" 
+            *ngIf="formGroup.get('confirmpassword')?.touched && formGroup.get('confirmpassword')?.hasError('required')">
+                Confirm Password is required
+            </span>
+            <span class="text-danger" 
+            *ngIf="formGroup.get('confirmpassword')?.touched && formGroup.get('confirmpassword')?.hasError('confirmedValidator')">
+                Passwords do not match.
+            </span>            
+        </div>        
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Register</button>
+        </div>   
+    </form>
+</div>
+    

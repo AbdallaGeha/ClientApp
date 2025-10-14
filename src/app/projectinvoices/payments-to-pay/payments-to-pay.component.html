@@ -1,0 +1,42 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Project Invoice Payments</h2>
+    </div>
+    <!-- Table for project invoice payments to be paid selection -->   
+    <div class="mt-5" *ngIf="isPaymentChecked && isPaymentChecked.length > 0">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Invoice Id</th>
+                    <th>Invoice Reference</th>
+                    <th>Invoice Date</th>
+                    <th>Supplier</th>
+                    <th>Project</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let payment of payments; let i = index">
+                    <td>
+                        <input type="checkbox" class="form-check-input" [(ngModel)]="isPaymentChecked[i]"/>
+                    </td>
+                    <td>{{ payment.id }}</td>
+                    <td>{{ payment.date | date : 'MMM d, y' }}</td>
+                    <td>{{ payment.amount | number:'1.2-2'}}</td>
+                    <td>{{ payment.invoiceId }}</td>
+                    <td>{{ payment.invoiceReference }}</td>
+                    <td>{{ payment.invoiceDate | date : 'MMM d, y' }}</td>
+                    <td>{{ payment.supplier }}</td>
+                    <td>{{ payment.project }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <button type="submit" class="btn btn-primary" (click)="pay()">Pay</button>
+    </div>
+</div>
+
+

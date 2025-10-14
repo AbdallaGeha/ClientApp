@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Update Project</h2>
+    </div>
+    <!-- Display server side errors -->
+    <span *ngIf="this.errorService.errorMessage" class="text-danger">{{this.errorService.errorMessage}}</span>          
+    <!-- Form for update a project -->  
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-group mb-2 mt-5 col-md-6">
+            <input type="text" formControlName="name" class="form-control" placeholder="Name">
+            <span class="text-danger" 
+            *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
+            Name is required</span>
+            <span class="text-danger" 
+            *ngIf="form.get('name')?.touched && form.get('name')?.hasError('maxLength')">
+            Max length is 50 characters</span>        
+        </div>
+        <div class="form-group mb-2 col-md-6">
+            <select formControlName="state" class="form-control">
+                <option value="">Select Project State</option>
+                <option value ="1">New</option>
+                <option value ="2">Executed</option>
+            </select>
+            <span class="text-danger" 
+            *ngIf="form.get('state')?.touched && form.get('state')?.hasError('required')">
+            Project state is required</span>
+        </div> 
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>

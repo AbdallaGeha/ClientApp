@@ -1,0 +1,146 @@
+  <mat-toolbar color="primary">
+    <span class="fill-remaining-space">
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <!-- Projects menu  -->
+        <button mat-menu-item [matMenuTriggerFor]="projects">
+          <mat-icon>menu</mat-icon>
+          <span>Projects</span>
+        </button>
+        <!-- Items menu  -->
+        <button mat-menu-item [matMenuTriggerFor]="items">
+          <mat-icon>menu</mat-icon>
+          <span>Items</span>
+        </button>
+        <!-- Suppliers menu  -->
+        <button mat-menu-item [matMenuTriggerFor]="suppliers">
+          <mat-icon>menu</mat-icon>
+          <span>Suppliers</span>
+        </button>
+        <!-- Banks menu  -->
+        <button mat-menu-item [matMenuTriggerFor]="banks">
+          <mat-icon>menu</mat-icon>
+          <span>Banks</span>
+        </button>
+        <!-- Project invoices menu  -->    
+        <button mat-menu-item [matMenuTriggerFor]="projectInvoices">
+          <mat-icon>menu</mat-icon>
+          <span>Project Invoices</span>
+        </button>
+        <!-- Users menu  -->
+        <button mat-menu-item [matMenuTriggerFor]="users">
+          <mat-icon>menu</mat-icon>
+          <span>Users</span>
+        </button>
+        <!-- Settings menu  -->
+        <button mat-menu-item routerLink="settings">
+          <mat-icon>menu</mat-icon>
+          <span>Settings</span>
+        </button>
+      </mat-menu>
+
+      <!-- Projects sub menus  -->
+      <mat-menu #projects="matMenu">
+        <button mat-menu-item routerLink = "projects/new">
+          <mat-icon>menu</mat-icon>
+            <span>New</span>
+        </button>
+        <button mat-menu-item routerLink = "projects">
+          <mat-icon>menu</mat-icon>
+            <span>Show All</span>
+        </button>
+      </mat-menu>
+      <!-- Items sub menus  -->
+      <mat-menu #items="matMenu">
+        <button mat-menu-item routerLink = "items/new">
+          <mat-icon>menu</mat-icon>
+            <span>New</span>
+        </button>
+        <button mat-menu-item routerLink = "items">
+          <mat-icon>menu</mat-icon>
+            <span>Show All</span>
+        </button>
+      </mat-menu>
+      <!-- Units sub menus  -->
+      <mat-menu #units="matMenu">
+        <button mat-menu-item routerLink = "units/new">
+          <mat-icon>menu</mat-icon>
+            <span>New</span>
+        </button>
+        <button mat-menu-item routerLink = "units">
+          <mat-icon>menu</mat-icon>
+            <span>Show All</span>
+        </button>
+      </mat-menu>
+      <!-- Suppliers sub menus  -->
+      <mat-menu #suppliers="matMenu">
+        <button mat-menu-item routerLink = "suppliers/new">
+          <mat-icon>menu</mat-icon>
+            <span>New</span>
+        </button>
+        <button mat-menu-item routerLink = "suppliers">
+          <mat-icon>menu</mat-icon>
+            <span>Show All</span>
+        </button>
+      </mat-menu>
+      <!-- Banks sub menus  -->
+      <mat-menu #banks="matMenu">
+        <button mat-menu-item routerLink = "banks/new">
+          <mat-icon>menu</mat-icon>
+            <span>New</span>
+        </button>
+        <button mat-menu-item routerLink = "banks">
+          <mat-icon>menu</mat-icon>
+            <span>Show All</span>
+        </button>
+        <!-- Bank accounts sub menus  -->
+        <button mat-menu-item routerLink = "bankaccounts/new">
+          <mat-icon>menu</mat-icon>
+            <span>New Account</span>
+        </button>
+        <button mat-menu-item routerLink = "bankaccounts">
+          <mat-icon>menu</mat-icon>
+            <span>Show All</span>
+        </button>      
+      </mat-menu>  
+      <!-- Project invoices sub menus  -->    
+      <mat-menu #projectInvoices="matMenu">
+        <button mat-menu-item routerLink = "projectinvoices/new">
+          <mat-icon>menu</mat-icon>
+            <span>New</span>
+        </button>
+        <button mat-menu-item routerLink = "projectinvoices/topay">
+          <mat-icon>menu</mat-icon>
+            <span>Payments To Pay</span>
+        </button>
+        <button mat-menu-item routerLink = "projectinvoices/view">
+          <mat-icon>menu</mat-icon>
+            <span>Project Invoices View</span>
+        </button>            
+      </mat-menu> 
+      <!-- Users sub menus  -->
+      <mat-menu #users="matMenu">
+        <button mat-menu-item routerLink = "users">
+          <mat-icon>menu</mat-icon>
+            <span>All Users</span>
+        </button>
+      </mat-menu>     
+    </span>
+
+    <!-- Logo  -->
+    <span class="fill-remaining-space">Project Invoices</span>
+    <!-- if user not logged in  -->
+    <ng-container *ngIf="!this.authService.isLoggedIn()">
+      <a routerLink="register" mat-button>Register</a>
+      <a routerLink="login" mat-button>Login</a>      
+    </ng-container>
+    <!-- if user is logged in  -->
+    <ng-container *ngIf="this.authService.isLoggedIn()">
+      <a routerLink="logout" mat-button>Logout</a>
+    </ng-container>
+
+</mat-toolbar>
+
+<router-outlet></router-outlet>

@@ -1,0 +1,37 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Add New Item</h2>
+    </div>
+    <!-- Display server side errors -->
+    <span *ngIf="this.errorService.errorMessage" class="text-danger">{{this.errorService.errorMessage}}</span>          
+    <!-- Form for creating a new item -->   
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-group mb-2 mt-5 col-md-6">
+            <input type="text" formControlName="name" class="form-control" placeholder="Name">
+            <span class="text-danger" 
+            *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
+            Name is required</span>
+            <span class="text-danger" 
+            *ngIf="form.get('name')?.touched && form.get('name')?.hasError('maxLength')">
+            Max length is 50 characters</span>        
+        </div>
+        <div class="form-group mb-2">
+            <input type="text" formControlName="unit" class="form-control" placeholder="Unit">
+            <span class="text-danger" 
+            *ngIf="form.get('unit')?.touched && form.get('unit')?.hasError('required')">
+            Unit is required</span>
+            <span class="text-danger" 
+            *ngIf="form.get('unit')?.touched && form.get('unit')?.hasError('maxLength')">
+            Max length is 50 characters</span>        
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" formControlName="affectInventory">
+            <label class="form-check-label">
+            Affect Inventory 
+            </label>
+        </div>       
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>

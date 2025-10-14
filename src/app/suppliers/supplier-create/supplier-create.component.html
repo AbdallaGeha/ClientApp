@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Add New Supplier</h2>
+    </div>
+    <!-- Display server side errors -->
+    <span *ngIf="this.errorService.errorMessage" class="text-danger">{{this.errorService.errorMessage}}</span>    
+    <!-- Form for creating a new supplier --> 
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-group mb-2 mt-5 col-md-6">
+            <input type="text" formControlName="name" class="form-control" placeholder="Name">
+            <span class="text-danger" 
+            *ngIf="form.get('name')?.touched && form.get('name')?.hasError('required')">
+            Name is required</span>
+            <span class="text-danger" 
+            *ngIf="form.get('name')?.touched && form.get('name')?.hasError('maxLength')">
+            Max length is 50 characters</span>        
+        </div>
+        <div class="form-group mb-2 col-md-6">
+            <input type="text" formControlName="phone" class="form-control" placeholder="Phone">
+            <span class="text-danger" 
+            *ngIf="form.get('phone')?.touched && form.get('phone')?.hasError('maxLength')">
+            Max length is 50 characters</span>  
+        </div>
+        <div class="form-group mb-2 col-md-6">
+            <input type="text" formControlName="email" class="form-control" placeholder="Email">
+            <span class="text-danger" 
+            *ngIf="form.get('email')?.touched && form.get('email')?.hasError('maxLength')">
+            Max length is 50 characters</span>
+            <span class="text-danger" 
+            *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+                Email format doesn't match
+            </span>           
+        </div>
+        <div class="form-group mb-2 col-md-6">
+            <input type="text" formControlName="address" class="form-control" placeholder="Address">
+            <span class="text-danger" 
+            *ngIf="form.get('address')?.touched && form.get('address')?.hasError('maxLength')">
+            Max length is 50 characters</span>  
+        </div>        
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,147 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Pay Invoices</h2>
+    </div>
+    <!-- Table for project invoice payments to be paid -->   
+    <div class="mt-5">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Invoice Id</th>
+                    <th>Invoice Reference</th>
+                    <th>Invoice Date</th>
+                    <th>Supplier</th>
+                    <th>Project</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let payment of payments; let i = index">
+                    <td>
+                    </td>
+                    <td>{{ payment.id }}</td>
+                    <td>{{ payment.date | date : 'MMM d, y' }}</td>
+                    <td>{{ payment.amount | number:'1.2-2'}}</td>
+                    <td>{{ payment.invoiceId }}</td>
+                    <td>{{ payment.invoiceReference }}</td>
+                    <td>{{ payment.invoiceDate | date : 'MMM d, y' }}</td>
+                    <td>{{ payment.supplier }}</td>
+                    <td>{{ payment.project }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <button class="btn btn-secondary m-2" (click)="addCheck()">Add Check</button>
+        <button class="btn btn-success" (click)="addCash()">Add Cash</button>
+    </div>
+
+    <!-- Cash form to populate cash movement entry --> 
+    <div *ngIf="formCash">
+        <form [formGroup]="formCash">
+            <div class="form-group mb-2">
+                <input type="date" formControlName="date" class="form-control">
+                <span class="text-danger" 
+                *ngIf="formCash.get('date')?.touched && formCash.get('date')?.hasError('required')">
+                Date is required</span>
+            </div>
+            <div class="form-group mb-2">
+                <input type="number" formControlName = "amount" class="form-control" placeholder="Amount">
+                <span class="text-danger" 
+                *ngIf="formCash.get('amount')?.touched && formCash.get('amount')?.hasError('required')">
+                Amount is required</span>
+            </div>
+            <button class="btn btn-secondary m-2" (click)="addCashEntry()" type="button">Add</button>
+            <button class="btn btn-danger" (click)="cancelCash()" type="button">Cancel</button>
+        </form>
+    </div>
+    <!-- Check form to populate check movement entry --> 
+    <div *ngIf="formCheck">
+        <form [formGroup]="formCheck">
+            <div class="form-group mb-2">
+                <select formControlName="bankAccountId" class="form-control">
+                    <option value="">Select Bank Account</option>
+                    <option *ngFor="let bankAccount of bankAccounts" [value]="bankAccount.key">{{ bankAccount.value}}</option>
+                </select>
+                <span class="text-danger" 
+                *ngIf="formCheck.get('bankAccountId')?.touched && formCheck.get('bankAccountId')?.hasError('required')">
+                Bank Account is required</span>
+            </div>
+            <div class="form-group mb-2">
+                <input type="date" formControlName="date" class="form-control">
+                <span class="text-danger" 
+                *ngIf="formCheck.get('date')?.touched && formCheck.get('date')?.hasError('required')">
+                Date is required</span>
+            </div>
+            <div class="form-group mb-2">
+                <input type="number" formControlName = "amount" class="form-control" placeholder="Amount">
+                <span class="text-danger" 
+                *ngIf="formCheck.get('amount')?.touched && formCheck.get('amount')?.hasError('required')">
+                Amount is required</span>
+            </div>
+            <div class="form-group mb-2">
+                <input formControlName = "checkNumber" class="form-control" placeholder="Check Number">
+                <span class="text-danger" 
+                *ngIf="formCheck.get('checkNumber')?.touched && formCheck.get('checkNumber')?.hasError('required')">
+                Check Number is required</span>
+            </div>        
+            <button class="btn btn-secondary m-2" (click)="addCheckEntry()"  type="button">Add</button>
+            <button class="btn btn-danger" (click)="cancelCheck()" type="button">Cancel</button>
+        </form>
+    </div>
+    <!-- Table for list of cash entries --> 
+    <div class="m-2" *ngIf="projectInvoiceCashList && projectInvoiceCashList.length > 0">
+        <table class="table">
+        <thead>
+            <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th></th>
+        </tr>
+            </thead> 
+        <tbody>
+            <tr *ngFor="let cashItem of projectInvoiceCashList; let i = index">
+                <td>{{ cashItem.date | date : 'MMM d, y' }}</td>
+                <td>{{ cashItem.amount | number:'1.2-2' }}</td>
+                <td>
+                    <button (click)="removeCash(i)" class="btn btn-danger btn-sm">Remove</button>
+                </td>            
+            </tr>
+        </tbody>
+
+        </table>
+    </div>
+    <!-- Table for list of checks entries -->
+    <div class="m-2" *ngIf="projectInvoiceCheckList && projectInvoiceCheckList.length > 0">
+        <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Bank Account</th>
+                <th>Check Number</th>
+                <th></th>        
+        </tr> 
+        </thead>
+        <tbody>
+            <tr *ngFor="let checkItem of projectInvoiceCheckList; let i = index">
+                <td>{{ checkItem.date | date : 'MMM d, y' }}</td>
+                <td>{{ checkItem.amount | number:'1.2-2' }}</td>
+                <td>{{ checkItem.bankAccount }}</td>
+                <td>{{ checkItem.checkNumber }}</td>
+                <td>
+                    <button (click)="removeCheck(i)" class="btn btn-danger btn-sm">Remove</button>
+                </td>                        
+            </tr>
+        </tbody>
+
+        </table>
+    </div>
+    <br/>
+    <div class="m-2">
+        <button class="btn btn-primary" (click)="pay()" [disabled]="!validateAmount()">Finalize Payment</button>
+    </div>
+</div>

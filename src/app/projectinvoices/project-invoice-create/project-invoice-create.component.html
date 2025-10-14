@@ -1,0 +1,89 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Project Invoice</h2>
+    </div>
+    <!-- Display server side errors -->
+    <span *ngIf="this.errorService.errorMessage" class="text-danger">{{this.errorService.errorMessage}}</span>
+    <!-- Form for creating a new project invoice -->   
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-group mb-2 mt-5">
+            <input type="text" formControlName="referenceNumber" class="form-control" placeholder="Reference Number">
+            <span class="text-danger" 
+            *ngIf="form.get('referenceNumber')?.touched && form.get('referenceNumber')?.hasError('required')">
+            Reference Number is required</span>
+        </div>
+        <div class="form-group mb-2">
+            <input type="date" formControlName="date" class="form-control">
+            <span class="text-danger" 
+            *ngIf="form.get('date')?.touched && form.get('date')?.hasError('required')">
+            Date is required</span>
+        </div>
+        <div class="form-group mb-2">
+            <select formControlName="projectId" class="form-control">
+                <option value="">Select Project</option>
+                <option *ngFor="let project of projects" [value]="project.key">{{ project.value}}</option>
+            </select>
+            <span class="text-danger" 
+            *ngIf="form.get('projectId')?.touched && form.get('projectId')?.hasError('required')">
+            Project is required</span>
+        </div>
+        <div class="form-group mb-2">
+            <select formControlName="supplierId" class="form-control">
+                <option value="">Select Supplier</option>
+                <option *ngFor="let supplier of suppliers" [value]="supplier.key">{{ supplier.value}}</option>
+            </select>
+            <span class="text-danger" 
+            *ngIf="form.get('supplierId')?.touched && form.get('supplierId')?.hasError('required')">
+            Supplier is required</span>
+        </div>
+        <div class="mb-2">
+            <button type="button" (click)="addRow()" class="btn btn-success">Add Item</button>
+        </div>
+        <!-- Project invoice items form array -->   
+        <div formArrayName ="items" class="mb-2">
+            <table class="table">
+                <tbody>
+                    <ng-container *ngFor="let itemRow of Items.controls; let i = index">
+                        <ng-container [formGroup] = "itemRow">
+                            <tr>
+                                <td>
+                                    <select formControlName="itemId" class="form-control">
+                                        <option value="">Select Item</option> 
+                                        <option *ngFor="let item of itemsKeyValue" [value]="item.key">{{ item.value}}</option>
+                                    </select>
+                                    <span class="text-danger" 
+                                    *ngIf="itemRow.get('itemId')?.touched && itemRow.get('itemId')?.hasError('required')">
+                                    Item is required</span>
+                                </td>
+                                <td>
+                                    <input formControlName = "unit" class="form-control" placeholder="Unit">
+                                    <span class="text-danger" 
+                                    *ngIf="itemRow.get('unit')?.touched && itemRow.get('unit')?.hasError('required')">
+                                    Unit is required</span>
+                                </td>
+                                <td>
+                                    <input type="number" formControlName = "quantity" class="form-control">
+                                    <span class="text-danger" 
+                                    *ngIf="itemRow.get('quantity')?.touched && itemRow.get('quantity')?.hasError('required')">
+                                    Quantity is required</span>
+                                </td>
+                                <td>
+                                    <input type="number" formControlName = "price" class="form-control">
+                                    <span class="text-danger" 
+                                    *ngIf="itemRow.get('price')?.touched && itemRow.get('price')?.hasError('required')">
+                                    Price is required</span>
+                                </td> 
+                                <td>
+                                    <button  type="button" (click)="removeItem(i)" class="btn btn-danger">Remove</button>
+                                </td>                                
+                            </tr>
+                        </ng-container>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || !Items || Items.length == 0">Save</button>
+        </div>
+    </form>
+</div>

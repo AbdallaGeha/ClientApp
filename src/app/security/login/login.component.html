@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>Login</h2>
+    </div>
+    <!-- Display server side errors -->
+    <span *ngIf="this.errorService.errorMessage" class="text-danger">{{this.errorService.errorMessage}}</span>
+    <!-- Form for user credentials -->   
+    <form [formGroup]="formGroup" (ngSubmit)="login()">
+        <div class="formGroup mt-3">
+            <input type="text" class="form-control" formControlName = "username" placeholder="User name">
+            <span class="text-danger" 
+            *ngIf="formGroup.get('username')?.touched && formGroup.get('username')?.hasError('required')">
+                User name is required
+            </span>
+        </div>
+        <div class="formGroup mt-3">
+            <input type="password" class="form-control" formControlName = "password" placeholder="Password">
+            <span class="text-danger" 
+            *ngIf="formGroup.get('password')?.touched && formGroup.get('password')?.hasError('required')">
+                password is required
+            </span>
+        </div> 
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>   
+    </form>
+</div>

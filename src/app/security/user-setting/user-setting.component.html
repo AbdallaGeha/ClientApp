@@ -1,0 +1,86 @@
+<div class="container">
+    <div class="pageHeader">
+        <h2>User Settings</h2>
+    </div>
+    <ng-container *ngIf="userDto">
+        <mat-tab-group>
+            <mat-tab label="User Info">  
+                <div class="container">
+                    <!-- Form for user info -->
+                    <form [formGroup]="formUserInfo" (ngSubmit)="save()">
+                        <div class="form-group mt-3">
+                            <label class="form-label">Email</label>
+                            <input type="text" class="form-control" disabled value="{{userDto.email}}" placeholder="Email">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" formControlName = "name" placeholder="Name">
+                            <span class="text-danger" 
+                            *ngIf="formUserInfo.get('name')?.touched && formUserInfo.get('name')?.hasError('required')">
+                                Name is required
+                            </span>
+                        </div> 
+                        <div class="form-group mt-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" formControlName = "phoneNumber" placeholder="Phone Number">
+                            <span class="text-danger" 
+                            *ngIf="formUserInfo.get('phoneNumber')?.touched && formUserInfo.get('phoneNumber')?.hasError('required')">
+                                Phone Number is required
+                            </span>
+                            <span class="text-danger" 
+                            *ngIf="formUserInfo.get('phoneNumber')?.touched && formUserInfo.get('phoneNumber')?.hasError('pattern')">
+                                Phone Number should be numbers only
+                            </span>            
+                        </div>               
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>   
+                    </form>
+                </div>
+            </mat-tab>
+            <mat-tab label="Change Password">
+                <div class="container">
+                    <!-- Form for changing password -->
+                    <form [formGroup]="formChangePassword" (ngSubmit)="changePassword()">
+                        <div class="form-group mt-3">
+                            <input type="password" class="form-control" formControlName = "oldPassword" placeholder="Current Password">
+                            <span class="text-danger" 
+                            *ngIf="formChangePassword.get('oldPassword')?.touched && formChangePassword.get('oldPassword')?.hasError('required')">
+                                required field 
+                            </span>
+                            <span class="text-danger" 
+                            *ngIf="formChangePassword.get('oldPassword')?.touched && formChangePassword.get('oldPassword')?.hasError('pattern')">
+                                password doesn't match the pattern 
+                            </span>
+                        </div> 
+                        <div class="form-group mt-3">
+                            <input type="password" class="form-control" formControlName = "newPassword" placeholder="New Password">
+                            <span class="text-danger" 
+                            *ngIf="formChangePassword.get('newPassword')?.touched && formChangePassword.get('newPassword')?.hasError('required')">
+                                required field
+                            </span>
+                            <span class="text-danger" 
+                            *ngIf="formChangePassword.get('newPassword')?.touched && formChangePassword.get('newPassword')?.hasError('pattern')">
+                                password doesn't match the pattern 
+                            </span>
+                        </div>
+                        <div class="form-group mt-3">
+                            <input type="password" class="form-control" formControlName = "newPasswordConfirm" placeholder="Confirm New Password">
+                            <span class="text-danger" 
+                            *ngIf="formChangePassword.get('newPasswordConfirm')?.touched && formChangePassword.get('newPasswordConfirm')?.hasError('required')">
+                                required field
+                            </span>  
+                            <span class="text-danger" 
+                            *ngIf="formChangePassword.get('newPasswordConfirm')?.touched && formChangePassword.get('newPasswordConfirm')?.hasError('confirmedValidator')">
+                                Password confirmation does not match new password.
+                            </span>  
+                        </div>                        
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary" [disabled]="formChangePassword.invalid">Change Password</button>
+                        </div>   
+                    </form>
+                </div>
+            </mat-tab>
+        </mat-tab-group>    
+    </ng-container>
+</div>
