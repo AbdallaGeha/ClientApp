@@ -1,10 +1,7 @@
 # 🧾 ProjectInvoices.Client
 
-An  **Angular** frontend for managing construction project invoices — from project and supplier and items setup, to invoice creation and approvals, and transactional payment handling. — powered by `ProjectInvoices.API` and `LoginManagement.API`.
+An  **Angular** frontend for managing construction project invoices — from project and supplier and items setup, to invoice creation and approvals, and transactional payment handling. — communicate with `ProjectInvoices.API` and `LoginManagement.API`.
 
-This client demonstrates my skills in **frontend architecture**,  **secure API integration**, and building **real-world business workflows** with Angular.
-
----
 
 ## 🎯 Purpose
 
@@ -59,26 +56,13 @@ The project is based on a real-world invoice system I helped develop during my r
 
 ---
 
-## 🗃️ Folder Structure
-src/
-├── app/
-│ ├── guards/ → For different roles
-│ ├── projects/ → Projects management
-│ ├── suppliers/ → Suppliers management
-│ ├── projectinvoices/ → Invoices management and payments management UI
-│ ├── security/ → Login and role handling
-
----
 
 ## 🧪 What I Focused On
-
-- Modular, scalable code using **Angular best practices**
-- Secure and smooth **JWT-based API communication**
 - UX design for business workflows (approvals, financial processing)
 - **reactive form handling** and UI validation
+- Secure and smooth **JWT-based API communication**
 - Clean and maintainable component architecture
 
----
 
 ## 🧠 What the project covers
 
@@ -87,8 +71,6 @@ src/
 - Handling complex form inputs and dynamic form arrays
 - Implementing client-side role-based UI restrictions
 - Creating guards and interceptors
-
----
 
 ## 🚀 Getting Started
 
@@ -110,7 +92,7 @@ I'm a .net developer focused on building scalable, testable applications using m
 
 This project highlights both my backend and frontend capabilities in a domain I’ve worked in professionally.
 
-- 💼 [LinkedIn](https://www.linkedin.com/in/abdalla-geha-9664b62b7/)
+- 💼 [LinkedIn](https://www.linkedin.com/in/abdallageha/)
 - 📂 [More Projects](https://github.com/AbdallaGeha)
 - 📧 Contact: abd_geha@hotmail.com
 
