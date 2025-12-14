@@ -5,8 +5,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectInvoicesService } from '../project-invoices.service';
 import { PaymentIdsService } from '../payment-ids.service';
-import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { LookupService } from 'src/app/shared/lookup.service';
+import { KeyValueDto } from 'src/app/model';
 
 /** 
  This component handles single or group of project invoice payments
@@ -38,6 +39,7 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
   
   constructor(
     private projectInvoiceService : ProjectInvoicesService,
+    private lookupService : LookupService,
     private paymentIdsService: PaymentIdsService,
     private fb: FormBuilder,
     private router: Router,
@@ -79,7 +81,7 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
    * Fetch bank accounts from the API
   */  
   fillBankAccounts(){
-    this.projectInvoiceService.getBankAccountsKeyValue().subscribe(
+    this.lookupService.getBankAccountsKeyValue().subscribe(
       {
         next: res => 
         {
@@ -240,6 +242,9 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
 
   /**
    * Validate payment amount and paid amount
+   * We validate this on the server again
+   * We can use and end point to validate if we 
+   * dont want to leak any logic.
   */    
   validateAmount(): boolean {
     let paymentAmount = 0;

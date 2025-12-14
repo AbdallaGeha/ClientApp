@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProjectInvoicesService } from '../project-invoices.service';
-import {  ProjectInvoiceViewDto, ProjectInvoiceViewRequestDto } from '../projectInvoices.model';
+import { ProjectInvoiceViewDto, ProjectInvoiceViewRequestDto } from '../projectInvoices.model';
 import { PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { KeyValueDto } from 'src/app/model';
 import { Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { LookupService } from 'src/app/shared/lookup.service';
 
 /** 
  This component displays list of project invoices detailed info 
@@ -31,6 +32,7 @@ export class ProjectInvoicesViewComponent implements OnInit, OnDestroy {
   pageSize = 5;
 
   constructor(private projectInvoicesService: ProjectInvoicesService,
+              private lookupService: LookupService,
               private fb : FormBuilder,
               private router: Router,
               private errorService: ErrorHandlingService) { }
@@ -61,7 +63,7 @@ export class ProjectInvoicesViewComponent implements OnInit, OnDestroy {
    * Fetch all projects from the API
   */  
   fillProjects(){
-    this.projectInvoicesService.getProjectsKeyValue().subscribe(
+    this.lookupService.getProjectsKeyValue().subscribe(
       {
         next:       res => {
           this.projects = res;
@@ -78,7 +80,7 @@ export class ProjectInvoicesViewComponent implements OnInit, OnDestroy {
    * Fetch all suppliers from the API
   */  
   fillSuppliers(){
-    this.projectInvoicesService.getSuppliersKeyValue().subscribe(
+    this.lookupService.getSuppliersKeyValue().subscribe(
       {
         next:       res => {
           this.suppliers = res;

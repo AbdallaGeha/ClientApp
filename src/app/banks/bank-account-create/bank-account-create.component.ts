@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
 import { BanksService } from '../banks.service';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { LookupService } from 'src/app/shared/lookup.service';
 
 /** 
  This component handles the creation of a new bank account
@@ -25,6 +26,7 @@ export class BankAccountCreateComponent  implements OnInit, OnDestroy {
   constructor(
     private bankAccountsService: BankAccountsService,
     private banksService: BanksService,
+    private lookupService : LookupService,
     private fb: FormBuilder,
     private router : Router,
     public errorService: ErrorHandlingService) {
@@ -51,7 +53,7 @@ export class BankAccountCreateComponent  implements OnInit, OnDestroy {
    * Fetch all banks from the API
   */
   fillBanks(){
-    this.banksService.getBanksKeyValue().subscribe(
+    this.lookupService.getBanksKeyValue().subscribe(
       {
         next: result =>  this.banks = result,
         error: error => this.errorService.handleError(error)

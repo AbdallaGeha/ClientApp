@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {  ProjectInvoiceCreationDto, ProjectInvoiceGroupPaymentCreationDto, ProjectInvoicePaymentCreationDto, ProjectInvoicePaymentReadyToPayDto, ProjectInvoiceUpdateDto, ProjectInvoiceUpdateGetDto, ProjectInvoiceViewRequestDto, ProjectInvoiceViewResponseDto } from './projectInvoices.model';
-import { KeyValueDto } from '../model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -50,56 +49,28 @@ export class ProjectInvoicesService {
    * Fetch project invoice payments to be paid from the API
   */   
   getPaymentsToPay() : Observable<ProjectInvoicePaymentReadyToPayDto[]>{
-    return this.http.get<ProjectInvoicePaymentReadyToPayDto[]>(this.apiURL + '/projectinvoice/paymentstopay');
+    return this.http.get<ProjectInvoicePaymentReadyToPayDto[]>(this.apiURL + '/payment/paymentstopay');
   }
 
   /**
    * Fetch project invoice payments to be paid by set of ids from the API
   */  
   getPaymentsToPayByIds(ids : number[]) : Observable<any>{
-    return this.http.post(this.apiURL + '/projectinvoice/paymentstopaybyids', ids);
+    return this.http.post(this.apiURL + '/payment/paymentstopaybyids', ids);
   }
 
   /**
    * pay project invoice single payment  
   */  
   payment(paymentCreationDto : ProjectInvoicePaymentCreationDto) : Observable<any> {
-    return this.http.post(this.apiURL + '/projectinvoice/payment', paymentCreationDto);
+    return this.http.post(this.apiURL + '/payment/payment', paymentCreationDto);
   }
 
   /**
    * pay project invoice group of payments  
   */  
   paymentGroup(paymentCreationDto : ProjectInvoiceGroupPaymentCreationDto) : Observable<any> {
-    return this.http.post(this.apiURL + '/projectinvoice/paymentgroup', paymentCreationDto);
-  }
-  
-  /**
-   * Fetch projects as key value pairs from the API
-  */   
-  getProjectsKeyValue(): Observable<KeyValueDto[]> {
-    return this.http.get<KeyValueDto[]>(this.apiURL + '/projectinvoice/projectskeyvalue');
-  }
-  
-  /**
-   * Fetch suppliers as key value pairs from the API
-  */  
-  getSuppliersKeyValue(): Observable<KeyValueDto[]> {
-    return this.http.get<KeyValueDto[]>(this.apiURL + '/projectinvoice/supplierskeyvalue');
-  }
-
-  /**
-   * Fetch items as key value pairs from the API
-  */  
-  getItemsKeyValue(): Observable<KeyValueDto[]> {
-    return this.http.get<KeyValueDto[]>(this.apiURL + '/projectinvoice/itemskeyvalue');
-  }
-  
-  /**
-   * Fetch bank accounts as key value pairs from the API
-  */  
-  getBankAccountsKeyValue(): Observable<KeyValueDto[]> {
-    return this.http.get<KeyValueDto[]>(this.apiURL + '/projectinvoice/bankaccountskeyvalue');
+    return this.http.post(this.apiURL + '/payment/paymentgroup', paymentCreationDto);
   }
   
   /**

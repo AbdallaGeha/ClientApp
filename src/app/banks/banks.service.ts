@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BankCreationDto, BankDto, BanksPaginateDto, BankUpdateDto, BankUpdateGetDto } from './banks.model';
+import { BankCreationDto, BanksPaginateDto, BankUpdateDto, BankUpdateGetDto } from './banks.model';
 import { Observable } from 'rxjs';
-import { KeyValueDto } from '../model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -40,13 +39,6 @@ export class BanksService {
   }
 
   /**
-   * Fetch all banks from the API
-  */  
-  getAll(): Observable<BankDto[]> {
-    return this.http.get<BankDto[]>(this.apiURL + '/bank/all');
-  }
-
-  /**
    * Fetch banks by pagination and search info from the API
   */  
   search(pageNumber : number, pageSize : number, search : string): Observable<BanksPaginateDto> {
@@ -61,10 +53,4 @@ export class BanksService {
     return this.http.delete(this.apiURL + '/bank/' + id);
   }
 
-  /**
-   * Fetch all banks as key value pairs from the API
-  */  
-  getBanksKeyValue(): Observable<KeyValueDto[]> {
-    return this.http.get<KeyValueDto[]>(this.apiURL + '/bank/bankskeyvalue');
-  }
 }

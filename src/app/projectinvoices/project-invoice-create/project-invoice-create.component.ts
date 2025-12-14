@@ -4,6 +4,7 @@ import { ProjectInvoicesService } from '../project-invoices.service';
 import { Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { LookupService } from 'src/app/shared/lookup.service';
 
 /** 
  This component handles the creation of a new project invoice
@@ -24,6 +25,7 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
   itemsKeyValue : KeyValueDto[] = [];
 
   constructor(private projectInvoiceService : ProjectInvoicesService,
+    private lookupService: LookupService,
     private fb : FormBuilder,
     private router : Router,
     public errorService: ErrorHandlingService) {
@@ -51,7 +53,7 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
    * Fetch all projects from the API
   */  
   fillProjects(){
-    this.projectInvoiceService.getProjectsKeyValue().subscribe(
+    this.lookupService.getProjectsKeyValue().subscribe(
       {
         next: res => {
           this.projects = res;
@@ -68,7 +70,7 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
    * Fetch all suppliers from the API
   */  
   fillSuppliers(){
-    this.projectInvoiceService.getSuppliersKeyValue().subscribe(
+    this.lookupService.getSuppliersKeyValue().subscribe(
       {
         next:  res => {
           this.suppliers = res;
@@ -85,7 +87,7 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
    * Fetch all items from the API
   */
   fillItems(){
-    this.projectInvoiceService.getItemsKeyValue().subscribe(
+    this.lookupService.getItemsKeyValue().subscribe(
       {
         next:       res => {
           this.itemsKeyValue = res;

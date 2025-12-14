@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { LookupService } from 'src/app/shared/lookup.service';
 
 /** 
  This component handles the update of an existing project invoice
@@ -33,6 +34,7 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
   isFormFilled = false;
 
   constructor(private projectInvoiceService : ProjectInvoicesService,
+    private lookupService: LookupService,
     private datePipe: DatePipe,
     private fb : FormBuilder,
     private router : Router,
@@ -97,7 +99,7 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
    * Fetch all projects from the API
   */  
   fillProjects(){
-    this.projectInvoiceService.getProjectsKeyValue().subscribe(
+    this.lookupService.getProjectsKeyValue().subscribe(
       {
         next:  res => {
           this.projects = res;
@@ -114,7 +116,7 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
    * Fetch all suppliers from the API
   */   
   fillSuppliers(){
-    this.projectInvoiceService.getSuppliersKeyValue().subscribe(
+    this.lookupService.getSuppliersKeyValue().subscribe(
       {
         next:       res => {
           this.suppliers = res;
@@ -131,7 +133,7 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
    * Fetch all items from the API
   */  
   fillItems(){
-    this.projectInvoiceService.getItemsKeyValue().subscribe(
+    this.lookupService.getItemsKeyValue().subscribe(
       {
         next: res => {
           this.itemsKeyValue = res;
@@ -177,8 +179,8 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
    * Check if the project invoice can be saved
    * An approved invoice cant be saved
    * the form must be valid
-   * the invoice should have at list one invoice item
-   * the content has to be changed after load from the API 
+   * the invoice should have at least one invoice item
+   * the content has changed after loading 
   */     
   get CanSave() : boolean {
     return !this.IsApproved && 
@@ -211,8 +213,10 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
 
   /**
    * Check if the project invoice can be approved
-   * the invoice should be at created state
-   * the invoice hasn't be changed 
+   * the invoice should be at created state (we can use end point
+   * like CanApprove if we dont want to leak any logic at all
+   * used her just for simplicity).
+   * the invoice hasn't changed 
   */   
   get CanApprove() : boolean {
     return this.invoice && this.invoice.state == Created_State 

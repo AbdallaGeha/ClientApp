@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BankAccountsService } from '../bank-accounts.service';
+import { LookupService } from 'src/app/shared/lookup.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BanksService } from '../banks.service';
 import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
 
@@ -23,7 +23,7 @@ export class BankAccountUpdateComponent implements OnInit, OnDestroy {
   banks : KeyValueDto[] = [];
   
   constructor(private bankAccountsService: BankAccountsService,
-    private banksService: BanksService,
+    private lookupService: LookupService,
     private fb: FormBuilder,
     private router : Router,
     private activatedRoute : ActivatedRoute,
@@ -57,7 +57,7 @@ export class BankAccountUpdateComponent implements OnInit, OnDestroy {
    * Fetch all banks from the API
   */  
   fillBanks(){
-    this.banksService.getBanksKeyValue().subscribe(
+    this.lookupService.getBanksKeyValue().subscribe(
       {
         next: res => {
           this.banks = res;
