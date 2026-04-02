@@ -5,6 +5,7 @@ import { LookupService } from 'src/app/shared/lookup.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { EMPTY, forkJoin, switchMap } from 'rxjs';
 
 /** 
  This component handles the update of an existing bank account
@@ -45,48 +46,19 @@ export class BankAccountUpdateComponent implements OnInit, OnDestroy {
       }
     )
 
-    this.fillBanks();
-
-    this.activatedRoute.params.subscribe(params => {
-      this.id = params['id'];
-      this.fillForm();
-    })
-  }
-
-  /**
-   * Fetch all banks from the API
-  */  
-  fillBanks(){
-    this.lookupService.getBanksKeyValue().subscribe(
-      {
-        next: res => {
-          this.banks = res;
-        },
-        error: er => 
-        {
-            this.errorService.handleError(er);
-        }
-      }
-    );
-  }
-
-  /**
-   * Fetch bank account from the API
-  */   
-  fillForm(){
-    if (this.id){
-      this.bankAccountsService.getForUpdate(this.id).subscribe(
-        {
-          next: res => {
-            this.form.patchValue(res);
-        },
-        error: er => 
-          {
-             this.errorService.handleError(er);
-          }
-        }
-      );
-    }
+    this.activatedRoute.params.pipe(
+      switchMap(params => {
+        const id = params['id'];
+        if (!id) return EMPTY;
+        return forkJoin({
+          banks: this.lookupService.getBanksKeyValue(),
+          account: this.bankAccountsService.getForUpdate(id)
+        });
+      })
+    ).subscribe({ next : ({ banks, account }) => {
+      this.banks = banks;
+      this.form.patchValue(account);
+    }, error: er => this.errorService.handleError(er)});
   }
 
   /**
@@ -96,14 +68,8 @@ export class BankAccountUpdateComponent implements OnInit, OnDestroy {
     let bankAccountUpdateDto = this.form.value;
     this.bankAccountsService.update(this.id,bankAccountUpdateDto).subscribe(
       {
-        next: result => 
-        {
-          this.router.navigate(['/bankaccounts']);
-        },
-        error: er => 
-        {
-          this.errorService.handleError(er);
-        }
+        next: result => this.router.navigate(['/bankaccounts']),
+        error: er => this.errorService.handleError(er)
       }
     )
   }
