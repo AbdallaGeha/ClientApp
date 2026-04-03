@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
 import { LookupService } from 'src/app/shared/lookup.service';
+import { EMPTY, forkJoin, switchMap } from 'rxjs';
 
 /** 
  This component handles the update of an existing project invoice
@@ -55,95 +56,58 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
       items : this.fb.array([])
     });
 
-    this.fillProjects();
-    this.fillSuppliers();
-    this.fillItems();
+    this.activatedRoute.params.pipe(switchMap(
+    p => 
+    {
+      const id = p['id']
+      if (!id) {
+        this.router.navigate(['/error']);
+        return EMPTY;
+      }
+      this.id = id;	
+      return forkJoin(
+        {
+          projects: this.lookupService.getProjectsKeyValue(),
+          suppliers: this.lookupService.getSuppliersKeyValue(),
+          items: this.lookupService.getItemsKeyValue(),
+          pi : this.projectInvoiceService.getForUpdate(this.id) 	 
+        } 
+      )         
+    }		
+    )
+    ).subscribe
+      ({
+        next: ({ projects, suppliers, items, pi}) => {
+          this.projects = projects;
+          this.suppliers = suppliers;
+          this.itemsKeyValue = items;
+          this.invoice = pi;
 
-    this.activatedRoute.params.subscribe(params => {
-      this.id = params['id'];
-      this.fillForm();
-      this.isFormFilled = true;
-    });
+          this.populateForm(this.invoice);
+        },
+        error: er => this.errorService.handleError(er)	  
+      }
+      )
   }
 
   /**
-   * Fetch project invoice from the API
+   * Populate form
   */   
-  fillForm(){
-    if (this.id){
-      this.projectInvoiceService.getForUpdate(this.id).subscribe(
-        {
-          next:  res => {
-            if (res){
-              this.invoice = res;
-              this.invoice.date = this.datePipe.transform(this.invoice.date, 'yyyy-MM-dd') ?? '';
-              if (this.invoice.items.length > 0){
-                this.invoice.items.forEach(x => this.addRow());
-              }
-              this.form.patchValue(this.invoice);
-  
-              if (this.IsApproved)
-                this.form.disable();
-            }
-        },
-        error: er => 
-          {
-            this.errorService.handleError(er);  
-          }
-        }
-      );
+  private populateForm(pi: ProjectInvoiceUpdateGetDto){
+    
+    this.invoice = pi;
+    this.invoice.date = this.datePipe.transform(this.invoice.date, 'yyyy-MM-dd') ?? '';
+    
+    if (this.invoice.items.length > 0){
+      this.invoice.items.forEach(() => this.addRow());
     }
-  }
 
-  /**
-   * Fetch all projects from the API
-  */  
-  fillProjects(){
-    this.lookupService.getProjectsKeyValue().subscribe(
-      {
-        next:  res => {
-          this.projects = res;
-        },
-      error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
-      }
-    );
-  }
+    this.form.patchValue(this.invoice);
 
-  /**
-   * Fetch all suppliers from the API
-  */   
-  fillSuppliers(){
-    this.lookupService.getSuppliersKeyValue().subscribe(
-      {
-        next:       res => {
-          this.suppliers = res;
-        },
-      error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
-      }
-    );
-  }
+    if (this.IsApproved)
+      this.form.disable();
 
-  /**
-   * Fetch all items from the API
-  */  
-  fillItems(){
-    this.lookupService.getItemsKeyValue().subscribe(
-      {
-        next: res => {
-          this.itemsKeyValue = res;
-        },
-      error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
-      }
-    );
+    this.isFormFilled = true;	
   }
 
   /**
