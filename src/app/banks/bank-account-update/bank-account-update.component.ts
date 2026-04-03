@@ -49,7 +49,11 @@ export class BankAccountUpdateComponent implements OnInit, OnDestroy {
     this.activatedRoute.params.pipe(
       switchMap(params => {
         const id = params['id'];
-        if (!id) return EMPTY;
+        if (!id)
+        {
+          this.router.navigate(['/error']);
+          return EMPTY;
+        } 
         return forkJoin({
           banks: this.lookupService.getBanksKeyValue(),
           account: this.bankAccountsService.getForUpdate(id)
