@@ -40,7 +40,7 @@ export interface ProjectInvoiceCreationDto
 export interface ProjectInvoiceUpdateDto
 {
     referenceNumber : string 
-    date : Date 
+    date : string 
     projectId : number
     supplierId : number
     state : number

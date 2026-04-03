@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Approved_State, Created_State, ProjectInvoiceItemUpdateGetDto, ProjectInvoiceUpdateGetDto } from '../projectInvoices.model';
+import { Approved_State, Created_State, ProjectInvoiceItemUpdateGetDto, ProjectInvoiceUpdateDto, ProjectInvoiceUpdateGetDto } from '../projectInvoices.model';
 import { ProjectInvoicesService } from '../project-invoices.service';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -160,18 +160,31 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
   save(){
     if (!this.CanSave) return;
 
-    var projectInvoice = this.form.value;
-    projectInvoice.state = Created_State;
-    this.projectInvoiceService.update(this.id, projectInvoice).subscribe(
-      {
-      next:  res => {
-          this.router.navigate(['/projectinvoices/view']);
-      },
+    let formValues = this.form.value as ProjectInvoiceUpdateDto;
+    let dto : ProjectInvoiceUpdateDto = {
+      ...formValues,
+      state : Created_State,
+      projectId : Number(formValues.projectId),
+      supplierId : Number(formValues.projectId),
+      items: formValues.items.map(x => ({
+        ...x,
+        itemId : Number(x.itemId),
+        quantity: Number(x.quantity),
+        price: Number(x.price)
+      })
+      )
+    }
+    
+    this.projectInvoiceService.update(this.id, dto).subscribe(
+    {
+        next:  res => {
+        this.router.navigate(['/projectinvoices/view']);
+    },
       error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
+      {
+        this.errorService.handleError(er);  
       }
+    }
     );
   }
 
@@ -211,24 +224,24 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
     if (this.form.invalid)
       return false;
 
-    let invoiceFromForm : ProjectInvoiceUpdateGetDto = this.form.value;
+    let invoiceForm = this.form.value;
 
-    if (invoiceFromForm.referenceNumber !== this.invoice.referenceNumber)
+    if (invoiceForm.referenceNumber !== this.invoice.referenceNumber)
       return true;
 
-    if (invoiceFromForm.date !== this.invoice.date)
+    if (invoiceForm.date !== this.invoice.date)
       return true;    
 
-    if (Number(invoiceFromForm.projectId) !== this.invoice.projectId)
+    if (Number(invoiceForm.projectId) !== this.invoice.projectId)
       return true;
 
-    if (Number(invoiceFromForm.supplierId) !== this.invoice.supplierId)
+    if (Number(invoiceForm.supplierId) !== this.invoice.supplierId)
       return true;
 
-    if (invoiceFromForm.items.length !== this.invoice.items.length)
+    if (invoiceForm.items.length !== this.invoice.items.length)
       return true;
 
-    let arr = invoiceFromForm.items as ProjectInvoiceItemUpdateGetDto[]; 
+    let arr = invoiceForm.items as ProjectInvoiceItemUpdateGetDto[]; 
     if (arr.findIndex(x => x.id == 0) !== -1)
       return true;
 
