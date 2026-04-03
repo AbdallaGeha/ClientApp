@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
 import { LookupService } from 'src/app/shared/lookup.service';
+import { Created_State, ProjectInvoiceCreationDto } from '../projectInvoices.model';
+import { forkJoin } from 'rxjs';
 
 /** 
  This component handles the creation of a new project invoice
@@ -44,60 +46,25 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
       items : this.fb.array([])
     });
 
-    this.fillProjects();
-    this.fillSuppliers();
-    this.fillItems();
+    this.loadLookups();
   }
 
   /**
-   * Fetch all projects from the API
-  */  
-  fillProjects(){
-    this.lookupService.getProjectsKeyValue().subscribe(
-      {
-        next: res => {
-          this.projects = res;
-        },
-      error: er => 
-        {
-          this.errorService.handleError(er);   
-        }
-      }
-    );
-  }
-
-  /**
-   * Fetch all suppliers from the API
-  */  
-  fillSuppliers(){
-    this.lookupService.getSuppliersKeyValue().subscribe(
-      {
-        next:  res => {
-          this.suppliers = res;
+   * Fetch projects, suppliers, items
+  */   
+  loadLookups(){
+    forkJoin({
+      projects: this.lookupService.getProjectsKeyValue(),
+      suppliers: this.lookupService.getSuppliersKeyValue(),
+      items: this.lookupService.getItemsKeyValue()
+    }).subscribe({
+      next: ({projects, suppliers, items}) =>{
+        this.projects = projects;
+        this.suppliers = suppliers;
+        this.itemsKeyValue = items;
       },
-      error: er => 
-        {
-          this.errorService.handleError(er);   
-        }
-      }
-    );
-  }
-
-  /**
-   * Fetch all items from the API
-  */
-  fillItems(){
-    this.lookupService.getItemsKeyValue().subscribe(
-      {
-        next:       res => {
-          this.itemsKeyValue = res;
-      },
-      error: er => 
-        {
-          this.errorService.handleError(er);   
-        }
-      }
-    );
+      error: er => this.errorService.handleError(er)
+    });
   }
 
   /**
@@ -132,17 +99,24 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
    * Create a new project invoice by sending data to the API
   */  
   save(){
-    var projectInvoice = this.form.value;
-    projectInvoice.state = 1;
-    this.projectInvoiceService.create(projectInvoice).subscribe(
+    let formValues = this.form.value as ProjectInvoiceCreationDto;
+    let dto : ProjectInvoiceCreationDto = {
+      ...formValues,
+      state : Created_State,
+      projectId: Number(formValues.projectId),
+      supplierId : Number(formValues.supplierId),
+      items: formValues.items.map(x => ({
+        ...x,
+        itemId: Number(x.itemId),
+        quantity : Number(x.quantity),
+        price: Number(x.price)
+      }))
+    };
+
+    this.projectInvoiceService.create(dto).subscribe(
       {
-        next: res => {
-          this.router.navigate(['/home']);
-      },
-      error: er => 
-        {
-          this.errorService.handleError(er);   
-        }
+        next: () => this.router.navigate(['/home']),
+        error: er => this.errorService.handleError(er)
       }
     );
   }

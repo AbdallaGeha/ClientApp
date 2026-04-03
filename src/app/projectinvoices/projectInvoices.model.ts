@@ -4,9 +4,9 @@ export const Approved_State = 2;
 export interface ProjectInvoiceItemCreationDto
 {
     itemId : number
-    Unit : string
-    Quantity : number
-    Price : number
+    unit : string
+    quantity : number
+    price : number
 }
 
 export interface ProjectInvoiceItemUpdateDto
@@ -30,7 +30,7 @@ export interface ProjectInvoiceItemUpdateGetDto
 export interface ProjectInvoiceCreationDto
 {
     referenceNumber : string 
-    date : Date
+    date : string
     projectId : number
     supplierId : number
     state : number
