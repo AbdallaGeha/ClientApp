@@ -76,7 +76,7 @@
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let element">
                 <a
-                    routerLink="/projectinvoices/update/{{element.id}}"
+                    [routerLink] ="['/projectinvoices/update', element.id]"
                     mat-flat-button color="primary"
                 >
                 Edit

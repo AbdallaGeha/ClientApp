@@ -140,8 +140,8 @@ export interface ProjectInvoiceViewRequestDto
     projectId : number | null
     supplierId : number | null
     state : number | null
-    fromDate : Date | null
-    toDate : Date | null
+    fromDate : string | null
+    toDate : string | null
     page : number
     pageSize : number
 }

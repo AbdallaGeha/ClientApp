@@ -4,9 +4,10 @@ import { ProjectInvoiceViewDto, ProjectInvoiceViewRequestDto } from '../projectI
 import { PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { KeyValueDto } from 'src/app/model';
-import { Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
 import { LookupService } from 'src/app/shared/lookup.service';
+import { ProjectInvoiceMapper } from '../project-invoice-mapper';
+import { forkJoin } from 'rxjs';
 
 /** 
  This component displays list of project invoices detailed info 
@@ -33,8 +34,8 @@ export class ProjectInvoicesViewComponent implements OnInit, OnDestroy {
 
   constructor(private projectInvoicesService: ProjectInvoicesService,
               private lookupService: LookupService,
+              private mapper : ProjectInvoiceMapper,
               private fb : FormBuilder,
-              private router: Router,
               private errorService: ErrorHandlingService) { }
 
   /**
@@ -53,61 +54,35 @@ export class ProjectInvoicesViewComponent implements OnInit, OnDestroy {
       toDate: [null]
     });
 
-    this.fillProjects();
-    this.fillSuppliers();
-
+    this.loadLookups();
     this.loadData();
   }
 
   /**
-   * Fetch all projects from the API
-  */  
-  fillProjects(){
-    this.lookupService.getProjectsKeyValue().subscribe(
-      {
-        next:       res => {
-          this.projects = res;
-        },
-      error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
-      }
-    );
-  }
-
-  /**
-   * Fetch all suppliers from the API
-  */  
-  fillSuppliers(){
-    this.lookupService.getSuppliersKeyValue().subscribe(
-      {
-        next:       res => {
-          this.suppliers = res;
-        },
-      error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
-      }
-    );
+   * Fetch projects, suppliers
+  */   
+  loadLookups(){
+    forkJoin({
+      projects: this.lookupService.getProjectsKeyValue(),
+      suppliers: this.lookupService.getSuppliersKeyValue()
+    }).subscribe({
+      next: ({projects, suppliers}) =>{
+        this.projects = projects;
+        this.suppliers = suppliers;
+      },
+      error: er => this.errorService.handleError(er)
+    });
   }
 
   /**
    * fetch project invoices detailed info 
   */   
   loadData(){
-    var requestDto : ProjectInvoiceViewRequestDto = {
-      id: this.form.value.id, 
-      reference: this.form.value.reference, 
-      fromDate: this.form.value.fromDate,
-      toDate: this.form.value.toDate,
-      page: this.currentPage,
-      pageSize: this.pageSize,
-      projectId: this.form.value.projectId == "" ? null : this.form.value.projectId,
-      state: this.form.value.state == "" ? null : this.form.value.state,
-      supplierId: this.form.value.supplierId == "" ? null : this.form.value.supplierId,
-    }
+    
+    const requestDto = this.mapper.MapToProjectInvoiceViewRequestDto(this.form.value,
+      this.currentPage,
+      this.pageSize
+    );
 
     this.projectInvoicesService.getProjectInvoiceView(requestDto).subscribe(
       {
@@ -115,10 +90,7 @@ export class ProjectInvoicesViewComponent implements OnInit, OnDestroy {
           this.invoices = res.data;
           this.totalRecords = res.totalRecords;
         },
-        error: er => 
-          {
-            this.errorService.handleError(er);  
-          }
+        error: er => this.errorService.handleError(er)
       }
     );
   }
