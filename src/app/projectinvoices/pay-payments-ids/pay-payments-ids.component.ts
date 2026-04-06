@@ -69,12 +69,8 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
             };
           }
       },
-      error: er => 
-        {
-          this.errorService.handleError(er); 
-        }
-      }
-    );
+      error: er => this.errorService.handleError(er)
+      });
   }
 
   /**
@@ -87,12 +83,8 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
         {
           this.bankAccounts = res;
         },
-        error: er => 
-        {
-          this.errorService.handleError(er); 
-        }
-      }
-    );
+        error: er => this.errorService.handleError(er)
+      });
   }
   
   /**
@@ -228,7 +220,7 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
 
       this.projectInvoiceService.paymentGroup(this.paymentGroupDto).subscribe(
         {
-          next: res => {
+          next: () => {
             this.router.navigate(['/home']);
           },
         error: er => 

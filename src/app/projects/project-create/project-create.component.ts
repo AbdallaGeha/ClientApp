@@ -21,7 +21,6 @@ export class ProjectCreateComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router : Router,
     public errorService: ErrorHandlingService) {
-    
   }
   
   /**
@@ -43,14 +42,8 @@ export class ProjectCreateComponent implements OnInit, OnDestroy {
     let projectCreationDto = this.form.value;
     this.projectsService.create(projectCreationDto).subscribe(
       {
-        next: result => 
-          {
-            this.router.navigate(['/projects']);
-          },
-          error: error => 
-          {
-            this.errorService.handleError(error); 
-          }
+        next: () => this.router.navigate(['/projects']),
+        error: error => this.errorService.handleError(error)
       }
     )
   }

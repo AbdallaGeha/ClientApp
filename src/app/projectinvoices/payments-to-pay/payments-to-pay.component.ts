@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 
 import { PaymentIdsService } from '../payment-ids.service';
-import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectInvoicesService } from '../project-invoices.service';
 import { ProjectInvoicePaymentReadyToPayDto } from '../projectInvoices.model';
@@ -25,7 +24,6 @@ export class PaymentsToPayComponent implements OnInit, OnDestroy{
 
   constructor(private projectInvoiceService : ProjectInvoicesService,
     private paymentIdsService: PaymentIdsService,
-    private fb : FormBuilder,
     private router : Router,
     private errorService: ErrorHandlingService) {
   }
@@ -41,12 +39,8 @@ export class PaymentsToPayComponent implements OnInit, OnDestroy{
           this.payments = res;
           this.payments.forEach(x => this.isPaymentChecked.push(false));
       },
-      error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
-      }
-    )
+          error: er => this.errorService.handleError(er)
+      })
   }
 
   /**
