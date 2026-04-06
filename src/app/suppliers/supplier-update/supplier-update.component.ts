@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SuppliersService } from '../suppliers.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { SupplierUpdateDto } from '../suppliers.model';
 
 /** 
  This component handles the update of an existing supplier
@@ -54,13 +55,10 @@ export class SupplierUpdateComponent implements OnInit, OnDestroy {
       this.suppliersService.getForUpdate(this.id).subscribe(
         {
           next: res => {
-            this.form.patchValue(res);
+          this.form.patchValue(res);
         },
-        error: error => {
-          this.errorService.handleError(error); 
-        }
-        }
-      );
+          error: error => this.errorService.handleError(error)
+        });
     }
   }
 
@@ -68,19 +66,19 @@ export class SupplierUpdateComponent implements OnInit, OnDestroy {
    * Update supplier by sending data to the API
   */   
   save(){
-    let supplierUpdateDto = this.form.value;
+    
+    let supplierUpdateDto : SupplierUpdateDto = {
+      ...this.form.value,
+      phone : this.form.value.phone || null,
+      email: this.form.value.email || null,
+      address: this.form.value.address || null
+    };
+
     this.suppliersService.update(this.id,supplierUpdateDto).subscribe(
       {
-        next: result => 
-        {
-          this.router.navigate(['/suppliers']);
-        },
-        error: error => 
-        {
-          this.errorService.handleError(error); 
-        }
-      }
-    )
+        next: result => this.router.navigate(['/suppliers']),
+        error: error => this.errorService.handleError(error)
+      })
   }
 
   /**

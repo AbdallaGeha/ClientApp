@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BanksService } from '../banks.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { BankUpdateDto } from '../banks.model';
 
 /** 
  This component handles the update of an existing bank
@@ -23,7 +24,6 @@ export class BankUpdateComponent  implements OnInit, OnDestroy {
     private router : Router,
     private activatedRoute : ActivatedRoute,
     public errorService: ErrorHandlingService) {
-    
   }
   
   /**
@@ -51,14 +51,10 @@ export class BankUpdateComponent  implements OnInit, OnDestroy {
       this.banksService.getForUpdate(this.id).subscribe(
         {
           next: res => {
-            this.form.patchValue(res);
+          this.form.patchValue(res);
         },
-        error: er => 
-          {
-            this.errorService.handleError(er);
-          }
-        }
-      );
+        error: er => this.errorService.handleError(er)
+        });
     }
   }
 
@@ -66,19 +62,12 @@ export class BankUpdateComponent  implements OnInit, OnDestroy {
    * Update bank by sending data to the API
   */  
   save(){
-    let bankUpdateDto = this.form.value;
+    let bankUpdateDto = this.form.value as BankUpdateDto;
     this.banksService.update(this.id,bankUpdateDto).subscribe(
       {
-        next: result => 
-        {
-          this.router.navigate(['/banks']);
-        },
-        error: error => 
-        {
-          this.errorService.handleError(error);
-        }
-      }
-    )
+        next: result => this.router.navigate(['/banks']),
+        error: error => this.errorService.handleError(error)
+      })
   }
 
   /**

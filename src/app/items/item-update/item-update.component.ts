@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ItemsService } from '../items.service';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { ItemUpdateDto } from '../items.model';
 
 /** 
  This component handles the update of an existing item
@@ -23,7 +24,6 @@ export class ItemUpdateComponent implements OnInit, OnDestroy {
     private router : Router,
     private activatedRoute : ActivatedRoute,
     public errorService: ErrorHandlingService) {
-    
   }
   
   /**
@@ -53,14 +53,10 @@ export class ItemUpdateComponent implements OnInit, OnDestroy {
       this.itemsService.getForUpdate(this.id).subscribe(
         {
           next: res => {
-            this.form.patchValue(res);
+          this.form.patchValue(res);
         },
-        error: er => 
-          {
-            this.errorService.handleError(er);
-          }
-        }
-      );
+        error: er => this.errorService.handleError(er)
+        });
     }
   }
 
@@ -68,17 +64,11 @@ export class ItemUpdateComponent implements OnInit, OnDestroy {
    * Update item by sending data to the API
   */  
   save(){
-    let itemUpdateDto = this.form.value;
+    let itemUpdateDto = this.form.value as ItemUpdateDto;
     this.itemsService.update(this.id,itemUpdateDto).subscribe(
       {
-        next: result => 
-        {
-          this.router.navigate(['/items']);
-        },
-        error: er => 
-        {
-          this.errorService.handleError(er);
-        }
+        next: result => this.router.navigate(['/items']),
+        error: er => this.errorService.handleError(er)
       }
     )
   }

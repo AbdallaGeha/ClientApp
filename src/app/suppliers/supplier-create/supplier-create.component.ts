@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SuppliersService } from '../suppliers.service';
 import { Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { SupplierCreationDto } from '../suppliers.model';
 
 /** 
  This component handles the creation of a new supplier
@@ -42,17 +43,16 @@ export class SupplierCreateComponent  implements OnInit, OnDestroy {
    * Create a new supplier by sending data to the API
   */  
   save(){
-    let supplierCreationDto = this.form.value;
+    let supplierCreationDto : SupplierCreationDto = {
+      ...this.form.value,
+      phone : this.form.value.phone || null,
+      email: this.form.value.email || null,
+      address: this.form.value.address || null
+    }
     this.suppliersService.create(supplierCreationDto).subscribe(
       {
-        next: result => 
-          {
-            this.router.navigate(['/suppliers']);
-          },
-          error: error => 
-          {
-            this.errorService.handleError(error); 
-          }
+        next: result => this.router.navigate(['/suppliers']),
+        error: error => this.errorService.handleError(error)
       }
     )
   }

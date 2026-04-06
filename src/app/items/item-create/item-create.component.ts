@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ItemsService } from '../items.service';
 import { Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { ItemCreationDto } from '../items.model';
 
 /** 
  This component handles the creation of a new item 
@@ -22,7 +23,6 @@ export class ItemCreateComponent  implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router : Router,
     public errorService: ErrorHandlingService) {
-    
   }
   
   /**
@@ -42,19 +42,12 @@ export class ItemCreateComponent  implements OnInit, OnDestroy {
    * Create a new item by sending data to the API
   */  
   save(){
-    let itemCreationDto = this.form.value;
+    const itemCreationDto = this.form.value as ItemCreationDto;
     this.itemsService.create(itemCreationDto).subscribe(
-      {
-        next: result => 
-          {
-            this.router.navigate(['/items']);
-          },
-          error: error => 
-          {
-            this.errorService.handleError(error);
-          }
-      }
-    )
+    {
+      next: () => this.router.navigate(['/items']),
+      error: error => this.errorService.handleError(error)
+    })
   }
 
   /**

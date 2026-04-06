@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
 import { EMPTY, forkJoin, switchMap } from 'rxjs';
+import { BankAccountUpdateDto } from '../bankAccounts.model';
 
 /** 
  This component handles the update of an existing bank account
@@ -69,10 +70,14 @@ export class BankAccountUpdateComponent implements OnInit, OnDestroy {
    * Update bank account by sending data to the API
   */  
   save(){
-    let bankAccountUpdateDto = this.form.value;
+    let bankAccountUpdateDto : BankAccountUpdateDto= {
+      ...this.form.value,
+      bankId: Number(this.form.value.bankId)
+    };
+
     this.bankAccountsService.update(this.id,bankAccountUpdateDto).subscribe(
       {
-        next: result => this.router.navigate(['/bankaccounts']),
+        next: () => this.router.navigate(['/bankaccounts']),
         error: er => this.errorService.handleError(er)
       }
     )

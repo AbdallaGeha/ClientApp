@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BankAccountsService } from '../bank-accounts.service';
 import { Router } from '@angular/router';
 import { KeyValueDto } from 'src/app/model';
-import { BanksService } from '../banks.service';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
 import { LookupService } from 'src/app/shared/lookup.service';
+import { BankAccountCreationDto } from '../bankAccounts.model';
 
 /** 
  This component handles the creation of a new bank account
@@ -25,12 +25,10 @@ export class BankAccountCreateComponent  implements OnInit, OnDestroy {
 
   constructor(
     private bankAccountsService: BankAccountsService,
-    private banksService: BanksService,
     private lookupService : LookupService,
     private fb: FormBuilder,
     private router : Router,
     public errorService: ErrorHandlingService) {
-
     }
 
   /**
@@ -65,17 +63,14 @@ export class BankAccountCreateComponent  implements OnInit, OnDestroy {
    * Create a new bank account by sending data to the API
   */
   save(){
-    let bankAccountCreationDto = this.form.value;
+    let bankAccountCreationDto : BankAccountCreationDto = {
+      ...this.form.value,
+      bankId: Number(this.form.value.bankId)
+    }
     this.bankAccountsService.create(bankAccountCreationDto).subscribe(
       {
-        next: result => 
-          {
-            this.router.navigate(['/bankaccounts']);
-          },
-          error: error => 
-          {
-            this.errorService.handleError(error);
-          }
+        next: () => this.router.navigate(['/bankaccounts']),
+        error: error => this.errorService.handleError(error)
       }
     )
   }

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BanksService } from '../banks.service';
 import { Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { BankCreationDto } from '../banks.model';
 
 /** 
  This component handles the creation of a new bank
@@ -21,7 +22,6 @@ export class BankCreateComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router : Router,
     public errorService: ErrorHandlingService) {
-    
   }
   
   /**
@@ -39,19 +39,12 @@ export class BankCreateComponent implements OnInit, OnDestroy {
    * Create a new bank by sending data to the API
   */
   save(){
-    let bankCreationDto = this.form.value;
+    let bankCreationDto = this.form.value as BankCreationDto;
     this.banksService.create(bankCreationDto).subscribe(
       {
-        next: result => 
-        {
-          this.router.navigate(['/banks']);
-        },
-        error: error => 
-        {
-          this.errorService.handleError(error); 
-        }
-      }
-    )
+        next: () => this.router.navigate(['/banks']),
+        error: error => this.errorService.handleError(error)
+      })
   }
 
   /**

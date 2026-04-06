@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectsService } from '../projects.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { ProjectUpdateDto } from '../projects.model';
 
 /** 
  This component handles the update of an existing project
@@ -50,15 +51,12 @@ export class ProjectUpdateComponent implements OnInit, OnDestroy {
   fillForm(){
     if (this.id){
       this.projectsService.getForUpdate(this.id).subscribe(
-        {
-          next: res => {
-            this.form.patchValue(res);
-        },
-        error: error => {
-          this.errorService.handleError(error); 
-        }
-        }
-      );
+      {
+        next: res => {
+        this.form.patchValue(res);
+      },
+        error: error => this.errorService.handleError(error)
+      });
     }
   }
 
@@ -66,19 +64,15 @@ export class ProjectUpdateComponent implements OnInit, OnDestroy {
    * Update project by sending data to the API
   */  
   save(){
-    let projectUpdateDto = this.form.value;
-    this.projectsService.update(this.id,projectUpdateDto).subscribe(
-      {
-        next: result => 
-        {
-          this.router.navigate(['/projects']);
-        },
-        error: error => 
-        {
-          this.errorService.handleError(error); 
-        }
-      }
-    )
+    const projectUpdateDto : ProjectUpdateDto = { 
+      ...this.form.value,
+      state : Number(this.form.value.state)
+    };
+    this.projectsService.update(this.id, projectUpdateDto).subscribe(
+    {
+      next: () => this.router.navigate(['/projects']),
+      error: error => this.errorService.handleError(error)
+    });
   }
 
   /**
