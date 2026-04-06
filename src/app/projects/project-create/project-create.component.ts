@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectsService } from '../projects.service';
 import { Router } from '@angular/router';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
+import { ProjectCreationDto } from '../projects.model';
 
 /** 
  This component handles the creation of a new construction project
@@ -39,7 +40,11 @@ export class ProjectCreateComponent implements OnInit, OnDestroy {
    * Create a new project by sending data to the API
   */  
   save(){
-    let projectCreationDto = this.form.value;
+    const projectCreationDto : ProjectCreationDto = { 
+      ...this.form.value,
+      state : Number(this.form.value.state)
+    };
+
     this.projectsService.create(projectCreationDto).subscribe(
       {
         next: () => this.router.navigate(['/projects']),
