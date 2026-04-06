@@ -8,6 +8,7 @@ import { KeyValueDto } from 'src/app/model';
 import { ErrorHandlingService } from 'src/app/error-handling.service';
 import { LookupService } from 'src/app/shared/lookup.service';
 import { EMPTY, forkJoin, switchMap } from 'rxjs';
+import { ProjectInvoiceMapper } from '../project-invoice-mapper';
 
 /** 
  This component handles the update of an existing project invoice
@@ -36,6 +37,7 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
 
   constructor(private projectInvoiceService : ProjectInvoicesService,
     private lookupService: LookupService,
+    private mapper: ProjectInvoiceMapper,
     private datePipe: DatePipe,
     private fb : FormBuilder,
     private router : Router,
@@ -160,40 +162,22 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
   save(){
     if (!this.CanSave) return;
 
-    let formValues = this.form.value as ProjectInvoiceUpdateDto;
-    let dto : ProjectInvoiceUpdateDto = {
-      ...formValues,
-      state : Created_State,
-      projectId : Number(formValues.projectId),
-      supplierId : Number(formValues.projectId),
-      items: formValues.items.map(x => ({
-        ...x,
-        itemId : Number(x.itemId),
-        quantity: Number(x.quantity),
-        price: Number(x.price)
-      })
-      )
-    }
+    const formValues = this.form.value as ProjectInvoiceUpdateDto;
+    const dto = this.mapper.MapToProjectInvoiceUpdateDto(formValues);
     
     this.projectInvoiceService.update(this.id, dto).subscribe(
     {
         next:  res => {
         this.router.navigate(['/projectinvoices/view']);
     },
-      error: er => 
-      {
-        this.errorService.handleError(er);  
-      }
-    }
-    );
+        error: er => this.errorService.handleError(er)
+    });
   }
 
   /**
    * Check if the project invoice can be approved
    * the invoice should be at created state (we can use end point
-   * like CanApprove if we dont want to leak any logic at all
-   * used her just for simplicity).
-   * the invoice hasn't changed 
+   * like CanApprove if we dont want to leak any logic 
   */   
   get CanApprove() : boolean {
     return this.invoice && this.invoice.state == Created_State 

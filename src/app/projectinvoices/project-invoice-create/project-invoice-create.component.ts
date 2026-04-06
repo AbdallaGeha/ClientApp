@@ -7,6 +7,7 @@ import { ErrorHandlingService } from 'src/app/error-handling.service';
 import { LookupService } from 'src/app/shared/lookup.service';
 import { Created_State, ProjectInvoiceCreationDto } from '../projectInvoices.model';
 import { forkJoin } from 'rxjs';
+import { ProjectInvoiceMapper } from '../project-invoice-mapper';
 
 /** 
  This component handles the creation of a new project invoice
@@ -28,6 +29,7 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
 
   constructor(private projectInvoiceService : ProjectInvoicesService,
     private lookupService: LookupService,
+    private mapper: ProjectInvoiceMapper,
     private fb : FormBuilder,
     private router : Router,
     public errorService: ErrorHandlingService) {
@@ -99,26 +101,15 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
    * Create a new project invoice by sending data to the API
   */  
   save(){
-    let formValues = this.form.value as ProjectInvoiceCreationDto;
-    let dto : ProjectInvoiceCreationDto = {
-      ...formValues,
-      state : Created_State,
-      projectId: Number(formValues.projectId),
-      supplierId : Number(formValues.supplierId),
-      items: formValues.items.map(x => ({
-        ...x,
-        itemId: Number(x.itemId),
-        quantity : Number(x.quantity),
-        price: Number(x.price)
-      }))
-    };
+    
+    const formValues = this.form.value as ProjectInvoiceCreationDto;
+    const dto = this.mapper.MapToProjectInvoiceCreationDto(formValues);
 
     this.projectInvoiceService.create(dto).subscribe(
-      {
-        next: () => this.router.navigate(['/home']),
-        error: er => this.errorService.handleError(er)
-      }
-    );
+    {
+      next: () => this.router.navigate(['/home']),
+      error: er => this.errorService.handleError(er)
+    });
   }
 
   /**

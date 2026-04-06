@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ProjectInvoiceViewRequestDto } from './projectInvoices.model';
+import { Created_State, ProjectInvoiceCreationDto, ProjectInvoiceUpdateDto, ProjectInvoiceViewRequestDto } from './projectInvoices.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,36 @@ export class ProjectInvoiceMapper {
       page: page,
       pageSize: pageSize
     }
+  }
+
+  MapToProjectInvoiceCreationDto(formValue: ProjectInvoiceCreationDto) : ProjectInvoiceCreationDto{
+    return {
+      ...formValue,
+      state : Created_State,
+      projectId: Number(formValue.projectId),
+      supplierId : Number(formValue.supplierId),
+      items: formValue.items.map(x => ({
+        ...x,
+        itemId: Number(x.itemId),
+        quantity : Number(x.quantity),
+        price: Number(x.price)
+      }))
+    };
+  }
+
+  MapToProjectInvoiceUpdateDto(formValue: ProjectInvoiceUpdateDto) : ProjectInvoiceUpdateDto{
+    return {
+      ...formValue,
+      state : Created_State,
+      projectId : Number(formValue.projectId),
+      supplierId : Number(formValue.projectId),
+      items: formValue.items.map(x => ({
+        ...x,
+        itemId : Number(x.itemId),
+        quantity: Number(x.quantity),
+        price: Number(x.price)
+      }))
+    };
   }
 
   normalizeNumber(value: any): number | null {
