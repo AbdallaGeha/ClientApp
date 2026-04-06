@@ -28,7 +28,6 @@ export class ProjectIndexComponent implements OnInit, OnDestroy {
   
   constructor(private projectService: ProjectsService,
     private activatedRoute: ActivatedRoute,
-    private router : Router,
     private fb : FormBuilder,
     private errorService: ErrorHandlingService
     ) {
@@ -81,12 +80,8 @@ export class ProjectIndexComponent implements OnInit, OnDestroy {
           this.projects = res.projects;
           this.totalRecords = res.totalRecords;
         },
-        error: er => 
-          {
-            this.errorService.handleError(er);  
-          }
-      }
-    );
+        error: er => this.errorService.handleError(er)
+      });
   }
 
   /**
@@ -112,16 +107,12 @@ export class ProjectIndexComponent implements OnInit, OnDestroy {
   */  
   delete(id: number){
     this.projectService.delete(id).subscribe(
-      {
-        next: res => {
-          this.loadData();
-        },
-      error: er => 
-        {
-          this.errorService.handleError(er);  
-        }
-      }
-  );
+    {
+      next: res => {
+      this.loadData();
+    },
+      error: er => this.errorService.handleError(er)
+    });
   }
 
   /**
