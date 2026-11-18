@@ -64,8 +64,7 @@ export class UserRolesComponent implements OnInit, OnDestroy {
   assignRole(){
     const roleToAssign = this.form.value.role;
     
-    if (this.userRoles.roles.indexOf(roleToAssign) == -1)
-    {
+    if (!this.userRoles.roles.includes(roleToAssign)) {
         this.authService
           .assignRole({ email : this.userRoles.user.email, role : roleToAssign})
           .subscribe({
@@ -83,14 +82,15 @@ export class UserRolesComponent implements OnInit, OnDestroy {
    * Remove role from user
   */   
   removeRole(role: string){
-    if (this.userRoles.roles.indexOf(role) !== -1)
-    {
+    if (this.userRoles.roles.includes(role)) {
         this.authService
           .removeAssignedRole({ email : this.userRoles.user.email, role : role})
           .subscribe({
             next: res => {
-              let index = this.userRoles.roles.indexOf(role); 
-              this.userRoles.roles.splice(index, 1);
+              let index = this.userRoles.roles.indexOf(role);
+              if (index !== -1) {
+                this.userRoles.roles.splice(index, 1);
+              } 
             },
             error: er => {
               this.errorService.handleError(er);
