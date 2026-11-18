@@ -230,14 +230,14 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
       return true;
 
     let changeFound = false;
-    for (let i = 0; i < arr.length; i++)
+    for (const item of arr)
     {
-      let rowToCompare = this.invoice.items.find(x => x.id == arr[i].id);
-      if (Number(arr[i].itemId) !== rowToCompare?.itemId
-        || arr[i].unit !== rowToCompare?.unit
-        || arr[i].quantity !== rowToCompare?.quantity
-        || arr[i].price !== rowToCompare?.price
-     )
+      const rowToCompare = this.invoice.items.find(x => x.id === item.id);
+
+      if (Number(item.itemId) !== rowToCompare?.itemId
+        || item.unit !== rowToCompare?.unit
+        || item.quantity !== rowToCompare?.quantity
+        || item.price !== rowToCompare?.price)
       {
         changeFound = true;
         break;
