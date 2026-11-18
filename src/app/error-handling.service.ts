@@ -17,10 +17,10 @@ export class ErrorHandlingService {
   constructor(private router: Router) { }
 
   handleError(error : any){
-      if (error.status == 400){
+      if (error.status === 400){
         this.errorMessage = error.error;
       }
-      else if (error.status == 401 || error.status == 403){
+      else if (error.status === 401 || error.status === 403){
         this.router.navigate(['/unauthorized']); 
       }
       else{

@@ -39,7 +39,7 @@ export class BankCreateComponent implements OnInit, OnDestroy {
    * Create a new bank by sending data to the API
   */
   save(){
-    let bankCreationDto = this.form.value as BankCreationDto;
+    const bankCreationDto = this.form.value as BankCreationDto;
     this.banksService.create(bankCreationDto).subscribe(
       {
         next: () => this.router.navigate(['/banks']),

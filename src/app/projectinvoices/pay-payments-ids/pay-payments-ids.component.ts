@@ -93,7 +93,7 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
    * Initialize check form
   */   
   addCheck(){
-    if (this.bankAccounts.length == 0)
+    if (this.bankAccounts.length === 0)
     {
       this.fillBankAccounts();
     }
@@ -147,7 +147,7 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
     if (!this.formCheck || this.formCheck.invalid)
       return;
 
-    const bankAccount = this.bankAccounts.find(x => x.key == this.formCheck!.value.bankAccountId)?.value;
+    const bankAccount = this.bankAccounts.find(x => x.key === this.formCheck!.value.bankAccountId)?.value;
     
     if (!bankAccount)
       return;

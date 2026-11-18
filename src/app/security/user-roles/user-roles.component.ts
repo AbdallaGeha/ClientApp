@@ -62,7 +62,7 @@ export class UserRolesComponent implements OnInit, OnDestroy {
    * Add new role to user
   */    
   assignRole(){
-    let roleToAssign = this.form.value.role;
+    const roleToAssign = this.form.value.role;
     
     if (this.userRoles.roles.indexOf(roleToAssign) == -1)
     {

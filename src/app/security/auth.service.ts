@@ -85,7 +85,7 @@ export class AuthService {
    * Extract list of roles from token
   */    
   getRolesFromToken() : string[] {
-    let roles = this.getFieldFromJWT("role");
+    const roles = this.getFieldFromJWT("role");
     if (roles)
     {
       if (typeof roles === "string")
@@ -110,7 +110,7 @@ export class AuthService {
   */   
   isInRole(role: string) : boolean{
     let roles = this.getRolesFromToken();
-    if (roles.indexOf(role) != -1)
+    if (roles.indexOf(role) !== -1)
       return true;
 
     return false;

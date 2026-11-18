@@ -43,7 +43,7 @@ export class SupplierCreateComponent  implements OnInit, OnDestroy {
    * Create a new supplier by sending data to the API
   */  
   save(){
-    let supplierCreationDto : SupplierCreationDto = {
+    const supplierCreationDto : SupplierCreationDto = {
       ...this.form.value,
       phone : this.form.value.phone || null,
       email: this.form.value.email || null,

@@ -225,7 +225,7 @@ export class ProjectInvoiceUpdateComponent  implements OnInit, OnDestroy {
     if (invoiceForm.items.length !== this.invoice.items.length)
       return true;
 
-    let arr = invoiceForm.items as ProjectInvoiceItemUpdateGetDto[]; 
+    const arr = invoiceForm.items as ProjectInvoiceItemUpdateGetDto[]; 
     if (arr.findIndex(x => x.id == 0) !== -1)
       return true;
 

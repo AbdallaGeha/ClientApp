@@ -69,7 +69,7 @@ export class UserSettingComponent implements OnInit, OnDestroy {
    * Update user info
   */   
   save(){
-    let userUpdateDto : UserUpdateDto = {
+    const userUpdateDto : UserUpdateDto = {
       name: this.formUserInfo.value.name,
       phoneNumber: this.formUserInfo.value.phoneNumber
     };

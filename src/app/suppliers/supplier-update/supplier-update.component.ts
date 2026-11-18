@@ -67,7 +67,7 @@ export class SupplierUpdateComponent implements OnInit, OnDestroy {
   */   
   save(){
     
-    let supplierUpdateDto : SupplierUpdateDto = {
+    const supplierUpdateDto : SupplierUpdateDto = {
       ...this.form.value,
       phone : this.form.value.phone || null,
       email: this.form.value.email || null,

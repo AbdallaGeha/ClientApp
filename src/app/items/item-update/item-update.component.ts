@@ -64,7 +64,7 @@ export class ItemUpdateComponent implements OnInit, OnDestroy {
    * Update item by sending data to the API
   */  
   save(){
-    let itemUpdateDto = this.form.value as ItemUpdateDto;
+    const itemUpdateDto = this.form.value as ItemUpdateDto;
     this.itemsService.update(this.id,itemUpdateDto).subscribe(
       {
         next: result => this.router.navigate(['/items']),

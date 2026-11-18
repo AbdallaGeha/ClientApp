@@ -80,7 +80,7 @@ export class ProjectInvoiceCreateComponent implements OnInit, OnDestroy  {
    * Add new item form group to items form array
   */    
   addRow(){
-    var row = this.fb.group({
+    const row = this.fb.group({
       itemId : ['', { validators : [Validators.required]}],
       unit : ['', { validators : [Validators.required]}],
       quantity : ['', { validators : [Validators.required]}],

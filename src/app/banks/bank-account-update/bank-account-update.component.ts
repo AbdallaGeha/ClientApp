@@ -70,7 +70,7 @@ export class BankAccountUpdateComponent implements OnInit, OnDestroy {
    * Update bank account by sending data to the API
   */  
   save(){
-    let bankAccountUpdateDto : BankAccountUpdateDto= {
+    const bankAccountUpdateDto : BankAccountUpdateDto= {
       ...this.form.value,
       bankId: Number(this.form.value.bankId)
     };

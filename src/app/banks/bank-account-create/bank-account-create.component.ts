@@ -63,7 +63,7 @@ export class BankAccountCreateComponent  implements OnInit, OnDestroy {
    * Create a new bank account by sending data to the API
   */
   save(){
-    let bankAccountCreationDto : BankAccountCreationDto = {
+    const bankAccountCreationDto : BankAccountCreationDto = {
       ...this.form.value,
       bankId: Number(this.form.value.bankId)
     }

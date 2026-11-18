@@ -62,7 +62,7 @@ export class BankUpdateComponent  implements OnInit, OnDestroy {
    * Update bank by sending data to the API
   */  
   save(){
-    let bankUpdateDto = this.form.value as BankUpdateDto;
+    const bankUpdateDto = this.form.value as BankUpdateDto;
     this.banksService.update(this.id,bankUpdateDto).subscribe(
       {
         next: result => this.router.navigate(['/banks']),
