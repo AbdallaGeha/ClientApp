@@ -32,10 +32,8 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
   projectInvoiceCheckList : ProjectInvoiceCheck[] = [];
   //List of cash movements to be populated from client input
   projectInvoiceCashList : ProjectInvoiceCash[] = [];
-  //Payment info to be send to the backend for single payment
-  paymentDto : ProjectInvoicePaymentCreationDto;
-  //Payment info to be send to the backend for group of payments
-  paymentGroupDto : ProjectInvoiceGroupPaymentCreationDto; 
+
+  isLoadingBankAccounts = false;
   
   constructor(
     private projectInvoiceService : ProjectInvoicesService,
@@ -51,39 +49,43 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
    * from the backend
   */    
   ngOnInit(): void {
+
+    if (this.paymentIdsService.Ids.length === 0)
+      this.router.navigate(['/error']);
+
     this.projectInvoiceService.getPaymentsToPayByIds(this.paymentIdsService.Ids).subscribe(
-      {
-        next: res => {
-          this.payments = res;
-          if (this.payments.length == 1){
-            this.paymentDto = {
-              paymentId: 0,
-              CashList: [],
-              checksList: []
-            };
-          } else if (this.payments.length > 1){
-            this.paymentGroupDto = {
-              paymentIds: [],
-              CashList: [],
-              checksList : []
-            };
-          }
+    {
+      next: res => {
+        if (res.length === 0) {
+          this.router.navigate(['/error']);
+          return;
+        }
+        this.payments = res;
       },
       error: er => this.errorService.handleError(er)
-      });
+    });
   }
 
   /**
    * Fetch bank accounts from the API
   */  
   fillBankAccounts(){
+
+    if (this.isLoadingBankAccounts)
+      return;
+    this.isLoadingBankAccounts = true;    
+
     this.lookupService.getBankAccountsKeyValue().subscribe(
       {
         next: res => 
         {
           this.bankAccounts = res;
+          this.isLoadingBankAccounts = false;
         },
-        error: er => this.errorService.handleError(er)
+        error: er => {
+          this.isLoadingBankAccounts = false;
+          this.errorService.handleError(er);  
+        }
       });
   }
   
@@ -132,105 +134,84 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
    * Add entry to list of cash 
   */    
   addCashEntry(){
-    if (!this.formCash?.invalid){
-      this.projectInvoiceCashList.push(this.formCash?.value);
+      if (!this.formCash || this.formCash.invalid)
+        return;
+      this.projectInvoiceCashList.push(this.formCash.value);
       this.cancelCash();
-    }
   }
 
   /**
    * Add entry to list of checks 
   */      
   addCheckEntry(){
-    if (!this.formCheck?.invalid){
-      let bankAccount = this.bankAccounts.find(x => x.key == this.formCheck?.value.bankAccountId)?.value;
-      if (bankAccount){
-        this.projectInvoiceCheckList.push({
-          date : this.formCheck?.value.date,
-          amount : this.formCheck?.value.amount,
-          bankAccount : bankAccount,
-          checkNumber : this.formCheck?.value.checkNumber
-        });
-        this.cancelCheck();
-      }
-    }
+    if (!this.formCheck || this.formCheck.invalid)
+      return;
+
+    const bankAccount = this.bankAccounts.find(x => x.key == this.formCheck!.value.bankAccountId)?.value;
+    
+    if (!bankAccount)
+      return;
+
+    this.projectInvoiceCheckList.push({
+      date : this.formCheck.value.date,
+      amount : this.formCheck.value.amount,
+      bankAccount : bankAccount,
+      checkNumber : this.formCheck.value.checkNumber
+    });
+    this.cancelCheck();
   }
 
   /**
    * Handle Pay transaction
   */    
-  pay(){
-    if (!this.validateAmount()){
-      alert("Validation error");
+pay() {
+    
+    if (!this.validateAmount()) {
+      alert('Validation error');
       return;
     }
 
-    if (this.payments.length == 1){
-      this.paymentDto.paymentId = this.payments[0].id;
+    const cashList = this.projectInvoiceCashList.map(x => ({
+      date: x.date,
+      amount: x.amount
+    }));
 
-      this.projectInvoiceCashList.forEach(x => {
-        this.paymentDto.CashList.push({
-          date : x.date,
-          amount: x.amount
-        });
+    const checksList = this.projectInvoiceCheckList.map(x => ({
+      date: x.date,
+      amount: x.amount,
+      bankAccountId: Number(
+        this.bankAccounts.find(a => a.value === x.bankAccount)?.key
+      ),
+      checkNumber: x.checkNumber
+    }));
+
+    if (this.payments.length === 1) {
+
+      const paymentDto: ProjectInvoicePaymentCreationDto = {
+        paymentId: this.payments[0].id,
+        CashList: cashList,
+        checksList: checksList
+      };
+
+      this.projectInvoiceService.payment(paymentDto).subscribe({
+        next: () => this.router.navigate(['/home']),
+        error: er => this.errorService.handleError(er)
       });
 
-      this.projectInvoiceCheckList.forEach(x => {
-        
-        this.paymentDto.checksList.push({
-          date : x.date,
-          amount: x.amount,
-          bankAccountId : Number(this.bankAccounts.find(a => a.value == x.bankAccount)?.key),
-          checkNumber : x.checkNumber
-        });
-      });      
+    } else if (this.payments.length > 1) {
 
-      this.projectInvoiceService.payment(this.paymentDto).subscribe(
-        {
-          next: x => {
-            this.router.navigate(['/home']);
-        },
-        error: er => 
-          {
-            this.errorService.handleError(er); 
-          }
-        }
-        )
-    }
+      const paymentGroupDto: ProjectInvoiceGroupPaymentCreationDto = {
+        paymentIds: this.payments.map(x => x.id),
+        CashList: cashList,
+        checksList: checksList
+      };
 
-    if (this.payments.length > 1){
-      this.paymentGroupDto.paymentIds = this.payments.map(x => x.id);
-
-      this.projectInvoiceCashList.forEach(x => {
-        this.paymentGroupDto.CashList.push({
-          date : x.date,
-          amount: x.amount
-        });
+      this.projectInvoiceService.paymentGroup(paymentGroupDto).subscribe({
+        next: () => this.router.navigate(['/home']),
+        error: er => this.errorService.handleError(er)
       });
-
-      this.projectInvoiceCheckList.forEach(x => {
-        
-        this.paymentGroupDto.checksList.push({
-          date : x.date,
-          amount: x.amount,
-          bankAccountId : Number(this.bankAccounts.find(a => a.value == x.bankAccount)?.key),
-          checkNumber : x.checkNumber
-        });
-      });      
-
-      this.projectInvoiceService.paymentGroup(this.paymentGroupDto).subscribe(
-        {
-          next: () => {
-            this.router.navigate(['/home']);
-          },
-        error: er => 
-          {
-            this.errorService.handleError(er); 
-          }
-        }
-      )
     }
-  }
+}
 
   /**
    * Validate payment amount and paid amount
@@ -252,12 +233,8 @@ export class PayPaymentsIdsComponent implements OnInit, OnDestroy{
       paidAmount += x.amount;
     });
 
-    if (paymentAmount > 0 && paymentAmount == paidAmount)
-    {
-      return true; 
-    }
-
-    return false;
+    return paymentAmount > 0 &&
+          paymentAmount.toFixed(2) === paidAmount.toFixed(2);
   }
 
   /**
