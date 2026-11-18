@@ -37,7 +37,7 @@ export class PaymentsToPayComponent implements OnInit, OnDestroy{
       {
         next: res => {
           this.payments = res;
-          this.payments.forEach(x => this.isPaymentChecked.push(false));
+          this.isPaymentChecked = this.payments.map(() => false);
       },
           error: er => this.errorService.handleError(er)
       })
@@ -47,16 +47,13 @@ export class PaymentsToPayComponent implements OnInit, OnDestroy{
    * Get payments selected ids and set paymentIdsService Ids property
   */ 
   pay(){
-    let paymentsIndices  : number[] = [];
-    for(let i = 0; i < this.isPaymentChecked.length; i++){
-      if (this.isPaymentChecked[i]){
-        paymentsIndices.push(i);
+    this.paymentIdsService.Ids = [];
+    for (let i = 0; i < this.isPaymentChecked.length; i++) {
+      if (this.isPaymentChecked[i]) {
+        this.paymentIdsService.Ids.push(this.payments[i].id);
       }
     }
-    
-    this.paymentIdsService.Ids = [];
-    paymentsIndices.forEach(i => this.paymentIdsService.Ids.push(this.payments[i].id));
-    
+
     this.router.navigate(['/projectinvoices/payids']);
   }
 
